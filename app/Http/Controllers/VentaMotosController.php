@@ -15,8 +15,15 @@ class VentaMotosController extends Controller
      */
     public function index()
     {
+
+
         $ventasMotos = VentaMoto::all(); // Obtener todos los registros de venta de motos
+
+                        // Agrega un mensaje de depuración para verificar los datos recibidos
+                        //dd($ventasMotos->all());
+
         return view('venta_motos.index', ['ventasMotos' => $ventasMotos]);
+        
     }
 
     /**
@@ -46,9 +53,6 @@ class VentaMotosController extends Controller
             'fecha_venta' => 'required',
         ]);
 
-        // Agrega un mensaje de depuración para verificar los datos recibidos
-        dd($request->all());
-
         // Crea un nuevo registro de VentaMotos
         $ventaMoto = new VentaMoto();
         $ventaMoto->fill([
@@ -59,10 +63,12 @@ class VentaMotosController extends Controller
             'Fecha_Venta' => $request->input('fecha_venta'),
         ]);
         $ventaMoto->save();
-        
+
+        // Agrega un mensaje de depuración para verificar los datos recibidos
+        //dd($request->all());
 
         // Redirigir a la vista index con un mensaje de éxito
-        return redirect()->route('venta_motos.index')
+        return redirect()->route('venta-motos.index')
                          ->with('success', 'Venta de moto creada exitosamente.');
     }
 
@@ -75,7 +81,7 @@ class VentaMotosController extends Controller
     public function show($id)
     {
         $ventaMotos = VentaMoto::findOrFail($id);
-        return view('venta_motos.show', compact('ventaMotos'));
+        return view('venta-motos.show', compact('ventaMotos'));
     }
 
     /**
@@ -86,8 +92,8 @@ class VentaMotosController extends Controller
      */
     public function edit($id)
     {
-        $ventaMotos = VentaMoto::findOrFail($id);
-        return view('venta_motos.edit', compact('ventaMotos'));
+        $ventaMoto = VentaMoto::findOrFail($id);
+        return view('venta_motos.edit', compact('ventaMoto'));
     }
 
     /**
@@ -97,21 +103,28 @@ class VentaMotosController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request, VentaMoto $ventaMoto)
+    {    
+                // Agrega un mensaje de depuración para verificar los datos recibidos
+        //dd($request->all());
+
         // Valida y actualiza los datos del formulario
         $request->validate([
             // Agrega aquí las reglas de validación para cada campo
         ]);
-
+            $ventaMoto->update($request->all());
         // Encuentra el registro existente de VentaMotos
-        $ventaMotos = VentaMoto::findOrFail($id);
+        //$ventaMotos = VentaMoto::where('id', $id)->firstOrFail();
+        //$ventaMotos = VentaMoto::findOrFail($id);
+
+                        // Agrega un mensaje de depuración para verificar los datos recibidos
+                        dd($ventaMoto->all());
 
         // Actualiza los datos del registro
-        $ventaMotos->update($request->all());
+        //$ventaMotos->update($request->all());
 
         // Redirecciona a la vista index con un mensaje de éxito
-        return redirect()->route('venta_motos.index')
+        return redirect()->route('venta-motos.index')
                          ->with('success', 'Venta de moto actualizada exitosamente.');
     }
 
@@ -127,7 +140,7 @@ class VentaMotosController extends Controller
         VentaMoto::findOrFail($id)->delete();
 
         // Redirecciona a la vista index con un mensaje de éxito
-        return redirect()->route('venta_motos.index')
+        return redirect()->route('venta-motos.index')
                          ->with('success', 'Venta de moto eliminada exitosamente.');
     }
 }
